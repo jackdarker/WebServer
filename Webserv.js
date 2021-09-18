@@ -1,3 +1,4 @@
+"use strict"
 const {createServer} = require("http");
 const {parse} = require("url");
 const {resolve,sep} = require("path");
@@ -6,13 +7,13 @@ const {stat,readdir} = require("fs").promises;
 const mime = require("mime");
 
 const host = 'localhost';
-const port = process.argv[2] || 8000;
-const servDir = sep+'public'+sep;
+var opt = parseCmdLine();
+const port = opt.port;
+const servDir = sep+(opt.dir)+sep;
 const baseDir = process.cwd();
 
 const methods = Object.create(null); //collection of handlers for GET,PUT,POST,...
 console.log('starting webserver for '+baseDir+servDir+' on port '+port)
-console.log('you can specify a different port with first cmd-line argument')
 //creates server with promises
 createServer((request,response)=> {
     let handler = methods[request.method] || notAllowed;
@@ -60,4 +61,19 @@ function urlPath(url){
             throw {status: 403, body: path+" Forbidden"};
     }
     return path;
+}
+function parseCmdLine(){
+    let opt = {port:8000,dir:'public'};
+    console.log('you can specify cmd-line options: p:portnumber d:server-directory');
+    for(var i=2;i<process.argv.length;i++) {
+        var _op = process.argv[i];
+        if(_op.substr(0,2)==='p:') {
+            opt.port=parseInt(_op.substr(2));
+        } else if(_op.substr(0,2)==='d:') {
+            opt.dir=_op.substr(2);
+        } else {
+            console.log('unknown option '+_op);
+        }
+    }
+    return(opt);
 }

@@ -3,7 +3,7 @@
 * requires pkg install: "npm install pkg"
 */
 const { exec } = require('pkg')
-exec([ process.argv[2], '--target', 'host', '--output', 'app.exe' ]).then(function() {
+exec([ process.argv[2], '--target', 'host', '--output', 'webserv.exe' ]).then(function() {
     console.log('Done!')
 }).catch(function(error) {
     console.error(error)
